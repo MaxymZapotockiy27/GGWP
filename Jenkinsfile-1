@@ -1,12 +1,18 @@
 pipeline {
-  agent {
-    docker { image 'node:16-alpine' }
-  }
-  stages {
-    stage('Test') {
-      steps {
-        sh 'node --version'
-      }
+    agent {
+        docker {
+            image 'node:16-alpine'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
-  }
+    stages {
+        stage('Check Docker') {
+            steps {
+                sh 'docker --version'
+                sh 'node --version'
+            }
+        }
+    }
 }
+
+ 
