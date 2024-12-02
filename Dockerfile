@@ -1,22 +1,26 @@
 FROM node:16-alpine
 
-# Install Docker and other dependencies
+# Встановлення Docker та інших залежностей
 RUN apk update && apk add --no-cache \
     docker \
     curl \
-    git
+    git \
+    bash
 
-# Set the working directory
+# Додати користувача jenkins до групи docker
+RUN addgroup -S docker && adduser -S user -G docker
+
+# Налаштування робочої директорії
 WORKDIR /app
 
-# Copy your application code to the container
+# Копіювання коду в контейнер
 COPY . .
 
-# Install any necessary packages
+# Встановлення пакунків
 RUN npm install
 
-# Expose the port your application runs on
+# Відкриття порту, на якому працює додаток
 EXPOSE 3000
 
-# Command to run your application (optional)
+# Запуск додатку (за бажанням)
 CMD ["npm", "start"]
