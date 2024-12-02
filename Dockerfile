@@ -1,26 +1,28 @@
 FROM node:16-alpine
 
-# Встановлення Docker та інших залежностей
-RUN apk update && apk add --no-cache \
-    docker \
+# Install required dependencies and Docker
+RUN apk update && \
+    apk add --no-cache \
     curl \
-    git \
-    bash
+    tar \
+    bash && \
+    # Install Docker from the given URL
+    curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-17.04.0-ce.tgz && \
+    tar xzvf docker-17.04.0-ce.tgz && \
+    mv docker/docker /usr/local/bin && \
+    rm -r docker docker-17.04.0-ce.tgz
 
-# Додати користувача jenkins до групи docker
-RUN addgroup -S docker && adduser -S user -G docker
-
-# Налаштування робочої директорії
+# Set the working directory
 WORKDIR /app
 
-# Копіювання коду в контейнер
+# Copy application code to the container
 COPY . .
 
-# Встановлення пакунків
+# Install application dependencies
 RUN npm install
 
-# Відкриття порту, на якому працює додаток
+# Expose the port that your application runs on
 EXPOSE 3000
 
-# Запуск додатку (за бажанням)
+# Command to run the application
 CMD ["npm", "start"]
